@@ -1,20 +1,19 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const notes = require('./db/db.json');
 const util = require('util');
 const { v4: uuidv4 } = require('uuid');
-// const api = require('./routes/index.js');
 
 const PORT = process.env.PORT || 3001;
 
 const app = express();
 
+// Promise version of fs.readFile
+const readFromFile = util.promisify(fs.readFile);
 
 //Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true}));
-// app.use('/api', api);
+app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
 
@@ -28,11 +27,8 @@ app.get('/notes', (req, res) =>
 
 // GET request for notes
 app.get('/api/notes', (req, res) => {
-    //Read current notes from db.json file
-    const dbFilePath = path.join(__dirname, './db/db.json');
-    const dbContent = fs.readFileSync(dbFilePath, 'utf8');
-    const notes = JSON.parse(dbContent);
-    //Send notes array to the client
+    const notes = readNotesFromDbFile();
+    //Return notes array to the client
     res.json(notes);
 });
 
@@ -90,9 +86,50 @@ app.post('/api/notes', (req, res) => {
     }
 });
 
+// app.delete('/api/notes/:id', (req, res) => {
+//     const noteId = req.params.id;
+//     readFromFile('./db/db.json')
+//       .then((data) => JSON.parse(data))
+//       .then((json) => {
+//       // Make a new array of all notes except the one with the ID provided in the URL
+//       const result = json.filter((note) => note.id !== noteId);
+
+//       // Save that array to the filesystem
+//       readFromFile('./db/db.json', result);
+
+//       // Respond to the DELETE request
+//       res.sendStatus(204);
+//       });
+// });
+
+app.delete('/api/notes/:id', (req, res) => {
+    const { id } = req.params;
+
+    let notes = readNotesFromDbFile();
+    notes = notes.filter((note) => note.id !== id);
+    writeNotesToDbFile(notes);
+
+    res.sendStatus(204);
+})
+
 // Fallback route for when a user attempts to visit routes that don't exist
 app.get('*', (req, res) => 
-    res.sendFile(path.join(__dirname, '/public/index.html')));  
+    res.sendFile(path.join(__dirname, '/public/index.html')));
+    
+    
+//Read notes function
+function readNotesFromDbFile() {
+    //Read current notes from db.json file
+    const dbFilePath = path.join(__dirname, './db/db.json');
+    const dbContent = fs.readFileSync(dbFilePath, 'utf8');
+    return JSON.parse(dbContent);
+}
+
+//Write notes function
+function writeNotesToDbFile(notes) {
+    const dbFilePath = path.join(__dirname, './db/db.json');
+    fs.writeFileSync(dbFilePath, JSON.stringify(notes));
+}
 
 //Listener for incoming connections to the specified port
 app.listen(PORT, () =>

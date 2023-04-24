@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "title": "Sample Note 1",
+    "text": "This is a sample note",
+    "id": "9d6dfb23-92a8-4b38-80f4-fee869ac7ff2"
+  },
+  {
+    "title": "Sample Note 2",
+    "text": "This is another sample note",
+    "id": "3f7afc5c-fb08-4d33-b3b6-3bf569b15cb4"
+  },
+  {
+    "title": "Sample Note to Delete",
+    "text": "Delete this sample note",
+    "id": "2bcc24da-63df-4c8b-a83c-01f4295004cd"
+  },
+  {
+    "title": "Complete Task",
+    "text": "This note can be deleted",
+    "id": "908d8d23-8966-408d-93b0-debe12736637"
+  }
+]
