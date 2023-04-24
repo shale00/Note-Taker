@@ -21,7 +21,12 @@
   To add a note, click on the 'get started' button on the home page. The user will be redirected to the notes page where the user can click on the right column to add a title and text. Note: The user must add both to be able to save the note. Once the user has written a note title and text, a save icon will appear in the upper right-hand corner. Click it to save the note. It will be added to the list of notes in the left column. To read a note, click on the note in the left column. The plus icon in the upper right-hand corner will empty the right column so that the user can add a new note. To delete a note, click on the red trash can icon.
 
   ## Credits
-  The starter code for this app was obtained at: https://github.com/coding-boot-camp/miniature-eureka
+  The starter code for this app was obtained at: https://github.com/coding-boot-camp/miniature-eureka  
+
+  Link to github repo: https://github.com/shale00/Note-Taker  
+  
+  Link to deployed app: https://exress-note-taker.herokuapp.com/  
+
 
   ## License
     This app is licensed under the MIT license.
