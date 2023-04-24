@@ -3,7 +3,7 @@
   [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
   ## Description
-  This app is a simple note taker using express.js. You can add and delete notes that will be saved to a backend database.
+  This app is a simple note taker using Express.js. You can add and delete notes that will be saved to a backend database.
 
   ## Table of Contents
   * [Installation](#installation)
@@ -24,7 +24,7 @@
   The starter code for this app was obtained at: https://github.com/coding-boot-camp/miniature-eureka  
 
   Link to github repo: https://github.com/shale00/Note-Taker  
-  
+
   Link to deployed app: https://exress-note-taker.herokuapp.com/  
 
 
