@@ -1,47 +1,59 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const { error } = require('console');
+const notes = require('./db/db.json');
+const util = require('util');
+const { v4: uuidv4 } = require('uuid');
+// const api = require('./routes/index.js');
 
 const PORT = process.env.PORT || 3001;
 
 const app = express();
 
+
 //Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
+// app.use('/api', api);
+
 app.use(express.static('public'));
 
+// GET Route for homepage
+app.get('/', (req, res) => 
+    res.sendFile(path.join(__dirname, '/public/index.html')));
 
 //Express.js route for '/notes'    
 app.get('/notes', (req, res) => 
     res.sendFile(path.join(__dirname, '/public/notes.html')));
 
-// Fallback route for when a user attempts to visit routes that don't exist
-app.get('*', (req, res) => 
-    res.sendFile(path.join(__dirname, '/public/index.html')));    
-
+// GET request for notes
+app.get('/api/notes', (req, res) => {
+    //Read current notes from db.json file
+    const dbFilePath = path.join(__dirname, './db/db.json');
+    const dbContent = fs.readFileSync(dbFilePath, 'utf8');
+    const notes = JSON.parse(dbContent);
+    //Send notes array to the client
+    res.json(notes);
+});
 
 //Post request to add a Note
-app.post('/notes', (req, res) => {
+app.post('/api/notes', (req, res) => {
     //Log that post request was received
     console.info(`${req.method} request received to add a note`);
 
     //Deconstructuring assignment for the items in req.body
     const { title, text } = req.body;
 
-    // Prepare a response object to send back to the client
-    // let response;
-
     //Check if there is anything in the response body
     if (title && text) {
         const newNote = {
             title,
-            text
+            text,
+            id: uuidv4(),
         };
 
         //Obtain existing notes
-        fs.readFile('./db/notes.json', 'utf8', (err, data) => {
+        fs.readFile('./db/db.json', 'utf8', (err, data) => {
             if (err) {
                 console.error(err);
             } else {
@@ -51,15 +63,12 @@ app.post('/notes', (req, res) => {
                 //Convert string into JSON object
                 const parsedNotes = JSON.parse(data);
 
-                // Convert the data to a string so we can save it
-                // const noteString = JSON.stringify(newNote);
-
                 //Add new note
                 parsedNotes.push(newNote);
 
                 //Write updated notes back to the file
                 fs.writeFile(
-                    './db/notes.json',
+                    './db/db.json',
                     JSON.stringify(parsedNotes, null, 2),
                     (writeErr) =>
                       writeErr
@@ -75,12 +84,15 @@ app.post('/notes', (req, res) => {
         };
 
         console.log(response);
-        res.status(201).json(response);
+        res.status(201).json(newNote);
     } else {
         res.status(500).json('Must include a title and text!');
     }
 });
 
+// Fallback route for when a user attempts to visit routes that don't exist
+app.get('*', (req, res) => 
+    res.sendFile(path.join(__dirname, '/public/index.html')));  
 
 //Listener for incoming connections to the specified port
 app.listen(PORT, () =>
