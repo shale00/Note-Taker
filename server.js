@@ -1,20 +1,20 @@
+//Imported packages
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const util = require('util');
 const { v4: uuidv4 } = require('uuid');
 
+//Port variable
 const PORT = process.env.PORT || 3001;
 
+// Initialize an instance of Express.js
 const app = express();
-
-// Promise version of fs.readFile
-const readFromFile = util.promisify(fs.readFile);
 
 //Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Static middleware pointing to the public folder
 app.use(express.static('public'));
 
 // GET Route for homepage
@@ -86,22 +86,7 @@ app.post('/api/notes', (req, res) => {
     }
 });
 
-// app.delete('/api/notes/:id', (req, res) => {
-//     const noteId = req.params.id;
-//     readFromFile('./db/db.json')
-//       .then((data) => JSON.parse(data))
-//       .then((json) => {
-//       // Make a new array of all notes except the one with the ID provided in the URL
-//       const result = json.filter((note) => note.id !== noteId);
-
-//       // Save that array to the filesystem
-//       readFromFile('./db/db.json', result);
-
-//       // Respond to the DELETE request
-//       res.sendStatus(204);
-//       });
-// });
-
+//Delete route to delete note
 app.delete('/api/notes/:id', (req, res) => {
     const { id } = req.params;
 
@@ -110,7 +95,7 @@ app.delete('/api/notes/:id', (req, res) => {
     writeNotesToDbFile(notes);
 
     res.sendStatus(204);
-})
+});
 
 // Fallback route for when a user attempts to visit routes that don't exist
 app.get('*', (req, res) => 
